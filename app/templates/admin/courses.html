@@ -1,0 +1,141 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ f.title or "New course" }}{% endblock %}
+
+{% macro text_input(id, name, label, value, type="text", maxlength=200, placeholder="", help="") %}
+<div class="field"><label for="{{ id }}">{{ label }}</label>
+  <input class="input" id="{{ id }}" name="{{ name }}" type="{{ type }}" value="{{ value }}" maxlength="{{ maxlength }}" placeholder="{{ placeholder }}">
+  {% if help %}<span class="help">{{ help }}</span>{% endif %}</div>
+{% endmacro %}
+
+{% macro list_editor(name, title, items, help="") %}
+<section class="panel" x-data='{ items: {{ items | tojson }} }'>
+  <div class="panel-head"><h2 class="serif">{{ title }}</h2><span class="dim" x-text="items.filter(i => i.trim()).length + ' items'"></span></div>
+  {% if help %}<p class="help">{{ help }}</p>{% endif %}
+  <template x-for="(item, i) in items" :key="i">
+    <div class="list-row">
+      <span class="grip" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"/></svg></span>
+      <input class="input" type="text" name="{{ name }}" x-model="items[i]" aria-label="{{ title }}, item" maxlength="400">
+      <button class="act icon" type="button" @click="items.splice(i, 1)" aria-label="Remove this item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+  </template>
+  <div><button class="btn btn-ghost btn-sm" type="button" @click="items.push('')">+ Add item</button></div>
+</section>
+{% endmacro %}
+
+{% block content %}
+<div class="page-head">
+  <div class="stack" style="gap:10px;min-width:0">
+    <div class="crumb">Courses &nbsp;/&nbsp; {{ "Edit" if course else "New" }}</div>
+    <h1 class="serif">{{ f.title or "New course" }}</h1>
+  </div>
+  <div class="head-actions">
+    {% if course and course.is_active %}<a class="btn btn-ghost" href="/" target="_blank" rel="noopener">Preview page</a>{% endif %}
+    {% if course %}<button class="btn btn-ghost" type="submit" form="dup-form">Duplicate course</button>{% endif %}
+    <button class="btn btn-gold" type="submit" form="course-form">{{ "Save changes" if course else "Create course" }}</button>
+  </div>
+</div>
+
+{% if errors %}<div class="form-error" role="alert"><b>Please fix this:</b><ul class="err-list">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+
+<div class="split-admin">
+  <!-- Course list -->
+  <aside class="course-list">
+    <div class="label">All courses</div>
+    {% for it in items %}{% set c = it.c %}
+    <a class="course-card{{ ' current' if course and course.id == c.id }}" href="/admin/courses/{{ c.id }}">
+      <div class="cc-top">{% if c.is_active %}<span class="pill pill-gold">Active</span>{% else %}<span class="pill">Inactive</span>{% endif %}{% if course and course.id == c.id %}<span class="dim small">Editing</span>{% endif %}</div>
+      <div class="cc-title">{{ c.title }}</div>
+      <div class="dim small">{{ c.start_date | date_range(c.end_date) }} · {{ it.total }} registration{{ "s" if it.total != 1 }} · {{ it.approved }} of {{ c.capacity }} seats approved</div>
+    </a>
+    {% endfor %}
+    <a class="btn btn-ghost" href="/admin/courses/new" style="border-style:dashed">+ New course</a>
+  </aside>
+
+  <!-- Editor -->
+  <div class="editor">
+    <form id="course-form" method="post" action="{{ '/admin/courses/' ~ course.id if course else '/admin/courses/new' }}" class="stack" style="gap:20px">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      <section class="panel row-between">
+        <div class="stack" style="gap:4px;min-width:0"><b>Active on the public site</b><span class="help">Only one course can be active. Turning on another course turns this one off.</span></div>
+        <label class="switch"><input type="checkbox" name="is_active" value="1"{% if f.is_active %} checked{% endif %}><span class="track"></span><span class="sr-only">Active</span></label>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2 class="serif">Course details</h2></div>
+        {{ text_input("c-title", "title", "Title", f.title) }}
+        {{ text_input("c-accent", "accent_word", "Highlighted word in the title (optional)", f.accent_word, maxlength=80, help="Shown in italic gold on the public page and brochure. It must appear in the title.") }}
+        {{ text_input("c-tagline", "tagline", "Tagline", f.tagline, maxlength=400) }}
+        <div class="field"><label for="c-intro">Introduction</label><textarea class="textarea" id="c-intro" name="introduction" rows="6">{{ f.introduction }}</textarea><span class="help">Leave a blank line between paragraphs.</span></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head"><h2 class="serif">Schedule, venue and cost</h2></div>
+        <div class="grid-fields">
+          {{ text_input("c-start", "start_date", "Start date", f.start_date, type="date") }}
+          {{ text_input("c-end", "end_date", "End date", f.end_date, type="date") }}
+          {{ text_input("c-time", "daily_time", "Daily time", f.daily_time, maxlength=80, placeholder="e.g. 9:00 am – 5:00 pm") }}
+          {{ text_input("c-duration", "duration_text", "Duration", f.duration_text, maxlength=80, placeholder="e.g. 2 days") }}
+          {{ text_input("c-venue", "venue", "Venue", f.venue, placeholder="Venue name and city") }}
+          {{ text_input("c-map", "map_url", "Map link", f.map_url, type="url", maxlength=400, placeholder="https://maps.app.goo.gl/…") }}
+          {{ text_input("c-fee", "fee_text", "Fee", f.fee_text, maxlength=120, placeholder="e.g. RM 2,500 per person") }}
+          {{ text_input("c-feenote", "fee_note", "Fee note", f.fee_note, maxlength=120, placeholder="e.g. HRD Corp claimable") }}
+          {{ text_input("c-cap", "capacity", "Capacity (seats)", f.capacity, type="number", maxlength=5) }}
+          {{ text_input("c-deadline", "registration_deadline", "Registration deadline (optional)", f.registration_deadline, type="date") }}
+        </div>
+        <p class="help">Empty fields show “To be announced” on the public page. When approved registrations reach the capacity, the page shows “Fully booked” and closes the form.</p>
+      </section>
+
+      {{ list_editor("outcomes", "Learning outcomes", f.outcomes) }}
+      {{ list_editor("prerequisites", "Prerequisites", f.prerequisites) }}
+      {{ list_editor("audience", "Who should attend", f.audience) }}
+
+      <section class="panel" x-data='{ mods: {{ f.outline | tojson }} }'>
+        <div class="panel-head"><h2 class="serif">Training outline</h2><span class="dim" x-text="mods.filter(m => m.title.trim()).length + ' modules'"></span></div>
+        <p class="help">Each module has a title and its topics, one per line. Modules are numbered in this order.</p>
+        <template x-for="(m, i) in mods" :key="i">
+          <div class="module">
+            <div class="module-top">
+              <span class="module-n serif" x-text="i + 1"></span>
+              <input class="input" type="text" name="module_title" x-model="m.title" aria-label="Module title" placeholder="Module title" maxlength="200">
+              <button class="act icon" type="button" @click="mods.splice(i, 1)" aria-label="Remove this module"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+            </div>
+            <textarea class="textarea" name="module_topics" x-model="m.topics" rows="4" aria-label="Topics, one per line" placeholder="Topics, one per line"></textarea>
+          </div>
+        </template>
+        <div><button class="btn btn-ghost btn-sm" type="button" @click="mods.push({ title: '', topics: '' })">+ Add module</button></div>
+      </section>
+
+      <div class="form-actions">
+        <button class="btn btn-gold btn-lg" type="submit">{{ "Save changes" if course else "Create course" }}</button>
+      </div>
+    </form>
+
+    {% if course %}
+    <form id="dup-form" method="post" action="/admin/courses/{{ course.id }}/duplicate"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"></form>
+
+    <section class="panel danger-zone" x-data="{ armed: false }">
+      <div class="panel-head"><h2 class="serif">Course status</h2></div>
+      <div class="row-between" style="gap:12px;flex-wrap:wrap">
+        <p class="help" style="max-width:520px">{% if course.is_active %}This is the active course. Deactivating it makes the public page say that no programme is open.{% else %}This course is inactive. Making it active turns off whichever course is active now.{% endif %}</p>
+        <div class="head-actions">
+          {% if course.is_active %}
+          <form method="post" action="/admin/courses/{{ course.id }}/deactivate"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-ghost" type="submit">Deactivate</button></form>
+          {% else %}
+          <form method="post" action="/admin/courses/{{ course.id }}/activate"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-ghost" type="submit">Make active</button></form>
+          {% endif %}
+          {% if reg_total == 0 %}
+          <form method="post" action="/admin/courses/{{ course.id }}/delete" x-ref="del"><input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button class="btn btn-danger" type="button" x-show="!armed" @click="armed = true">Delete course</button>
+            <button class="btn btn-danger solid" type="submit" x-show="armed" x-cloak>Click again to delete</button>
+          </form>
+          {% else %}<span class="help">{{ reg_total }} registration{{ "s" if reg_total != 1 }}: it can be deactivated but not deleted.</span>{% endif %}
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <p class="foot-note">The public page and the brochure PDF are both built from this course, so one edit updates both. Trainer highlights such as training hours live under Site content.</p>
+  </div>
+</div>
+{% endblock %}

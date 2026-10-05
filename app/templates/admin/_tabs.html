@@ -1,0 +1,5 @@
+{% for key, label in tabs %}
+<button class="tab{{ ' on' if status == key }}" role="tab" type="button" aria-selected="{{ 'true' if status == key else 'false' }}"
+        hx-get="/admin/registrations" hx-vals='{{ {"status": key} | tojson }}' hx-include="#f-course, #q"
+        hx-target="#table" hx-swap="innerHTML" hx-push-url="true">{{ label }}<span class="count">{{ counts.get(key, 0) }}</span></button>
+{% endfor %}

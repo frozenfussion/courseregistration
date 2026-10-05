@@ -1,0 +1,69 @@
+{#- One registration. Needs: r, status (current tab), q, emails, labels. -#}
+<div class="trow" id="row-{{ r.id }}" x-data="{ open: false }">
+  <div class="tr-main">
+    <div class="cell">
+      <span class="name">{{ r.name }}{% if r.flagged %} <span class="pill pill-kiv" title="{{ r.flag_reason }}">Flagged</span>{% endif %}</span>
+      <span class="dim ellip">{{ r.email }} · {{ r.phone }}</span>
+    </div>
+    <div class="cell"><span>{{ r.company or "—" }}</span><span class="dim">{{ r.job_title }}</span></div>
+    <div class="cell dim">{{ r.created_at | dt_short }}</div>
+    <div class="cell"><span class="pill pill-{{ r.status }}">{{ labels[r.status] }}</span></div>
+    <div class="cell actions">
+      {% for key, label in [("approved", "Approve"), ("kiv", "KIV"), ("rejected", "Reject")] %}
+      <button class="act{{ ' on-' ~ key if r.status == key }}" type="button"
+              hx-post="/admin/registrations/{{ r.id }}/decision" hx-target="#row-{{ r.id }}" hx-swap="outerHTML"
+              hx-vals='{{ {"status": key, "notify": "1", "tab": status, "q": q} | tojson }}'>{{ label }}</button>
+      {% endfor %}
+      <button class="act icon" type="button" @click="open = !open" :aria-expanded="open.toString()" aria-label="Details for {{ r.name }}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" :style="open ? 'transform:rotate(180deg)' : ''"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="tr-panel" x-show="open" x-cloak>
+    <dl class="details">
+      <div><dt>Email</dt><dd><a href="mailto:{{ r.email }}">{{ r.email }}</a></dd></div>
+      <div><dt>Phone</dt><dd>{{ r.phone }}</dd></div>
+      <div><dt>Company</dt><dd>{{ r.company or "—" }}</dd></div>
+      <div><dt>Job title</dt><dd>{{ r.job_title or "—" }}</dd></div>
+      <div class="wide"><dt>Notes from the student</dt><dd class="pre">{{ r.notes or "—" }}</dd></div>
+      {% if r.flagged %}<div class="wide"><dt>Flagged because</dt><dd>{{ r.flag_reason }}</dd></div>{% endif %}
+    </dl>
+
+    <form class="decide">
+      <input type="hidden" name="tab" value="{{ status }}"><input type="hidden" name="q" value="{{ q }}">
+      <div class="field">
+        <label for="note-{{ r.id }}">Note to the student (optional)</label>
+        <textarea class="textarea" id="note-{{ r.id }}" name="note" rows="2" maxlength="1000" placeholder="For example: please bring your laptop, or: let us talk after the course date is confirmed"></textarea>
+      </div>
+      <label class="check" for="notify-{{ r.id }}"><input id="notify-{{ r.id }}" type="checkbox" name="notify" value="1" checked><span>Email the student about this decision</span></label>
+      <div class="decide-btns">
+        {% for key, label in [("approved", "Approve"), ("kiv", "KIV"), ("rejected", "Reject"), ("pending", "Set to pending")] %}
+        <button class="act" type="button" hx-post="/admin/registrations/{{ r.id }}/decision" hx-include="closest form"
+                hx-target="#row-{{ r.id }}" hx-swap="outerHTML" hx-vals='{{ {"status": key} | tojson }}'>{{ label }}</button>
+        {% endfor %}
+      </div>
+    </form>
+
+    <div class="history">
+      <h4>Decisions</h4>
+      {% if r.log %}
+      <ul>{% for l in r.log %}<li><span>{{ labels[l.from_status] }} → <b>{{ labels[l.to_status] }}</b></span><span class="dim">{{ l.at | dt }}{% if l.notified %} · emailed{% endif %}{% if l.note %} · “{{ l.note }}”{% endif %}</span></li>{% endfor %}</ul>
+      {% else %}<p class="dim">No decision yet.</p>{% endif %}
+      <h4>Emails</h4>
+      {% set mails = emails.get(r.id, []) %}
+      {% if mails %}
+      <ul>{% for e in mails %}<li><span>{{ e.kind | replace("_", " ") | capitalize }} to {{ e.to_email }}</span>
+        <span class="{{ 'ok' if e.status == 'sent' else 'bad' }}-text">{{ "Sent" if e.status == "sent" else "Failed" }}</span>
+        <span class="dim">{{ e.created_at | dt }}</span>{% if e.error %}<span class="bad-text small">{{ e.error }}</span>{% endif %}</li>{% endfor %}</ul>
+      {% else %}<p class="dim">No emails recorded.</p>{% endif %}
+      <button class="act" type="button" hx-post="/admin/registrations/{{ r.id }}/resend-email" hx-target="#row-{{ r.id }}" hx-swap="outerHTML"
+              hx-vals='{{ {"tab": status, "q": q} | tojson }}'>Send {{ "the received" if r.status == "pending" else "the " ~ labels[r.status] | lower }} email again</button>
+      <div class="del" x-data="{ sure: false }">
+        <button class="act danger" type="button" x-show="!sure" @click="sure = true">Delete this registration</button>
+        <button class="act danger solid" type="button" x-show="sure" x-cloak hx-post="/admin/registrations/{{ r.id }}/delete"
+                hx-target="#row-{{ r.id }}" hx-swap="outerHTML" hx-vals='{{ {"tab": status, "q": q} | tojson }}'>Click again to delete it for good</button>
+      </div>
+    </div>
+  </div>
+</div>

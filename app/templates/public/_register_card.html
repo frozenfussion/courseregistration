@@ -1,0 +1,58 @@
+{#- The registration card. Rendered inside the page, and on its own as the htmx response from POST /register. -#}
+{% macro field(id, name, label, type="text", autocomplete="", placeholder="", required=False, maxlength=120, wide=False) %}
+<div class="field{% if wide %} wide{% endif %}">
+  <label for="f-{{ id }}">{{ label }}{% if required %} *{% endif %}</label>
+  <input class="input" id="f-{{ id }}" name="{{ name }}" type="{{ type }}"{% if autocomplete %} autocomplete="{{ autocomplete }}"{% endif %}
+    placeholder="{{ placeholder }}" maxlength="{{ maxlength }}" value="{{ values.get(name, '') }}"{% if required %} required{% endif %}
+    {% if errors.get(name) %} aria-invalid="true" aria-describedby="e-{{ id }}"{% endif %}>
+  {% if errors.get(name) %}<div class="field-error" id="e-{{ id }}">{{ errors[name] }}</div>{% endif %}
+</div>
+{% endmacro %}
+
+<div class="card" id="register-card">
+{% if state == "success" %}
+  <div class="result" role="status">
+    <div class="result-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e3cb98" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h3>Request received.</h3>
+    <p>Thank you. A confirmation is on its way to your email. The trainer will review your registration, and you will get another email once it is approved.</p>
+  </div>
+{% elif state == "full" %}
+  <div class="result">
+    <div class="eyebrow">All seats taken</div>
+    <h3>This programme is fully booked.</h3>
+    <p>Registration is closed for this date. Please check back for the next scheduled programme.</p>
+  </div>
+{% elif state == "deadline" %}
+  <div class="result">
+    <div class="eyebrow">Registration closed</div>
+    <h3>The registration deadline has passed.</h3>
+    <p>Please check back for the next scheduled programme, or contact the trainer directly.</p>
+  </div>
+{% else %}
+  <form class="form" method="post" action="/register#register" hx-post="/register" hx-target="#register-card" hx-swap="outerHTML show:top" hx-disabled-elt="find button[type=submit]" novalidate>
+    {% if form_error %}<div class="form-error" role="alert">{{ form_error }}</div>{% endif %}
+    <div class="form-grid">
+      {{ field("name", "name", "Full name", autocomplete="name", placeholder="As on your ID", required=True) }}
+      {{ field("email", "email", "Email", type="email", autocomplete="email", placeholder="you@company.com", required=True, maxlength=254) }}
+      {{ field("phone", "phone", "Phone", type="tel", autocomplete="tel", placeholder="+60 12 345 6789", required=True, maxlength=25) }}
+      {{ field("company", "company", "Company", autocomplete="organization", placeholder="Organisation name") }}
+      {{ field("job_title", "job_title", "Job title", autocomplete="organization-title", placeholder="e.g. Software Engineer", wide=True) }}
+    </div>
+    <div class="field">
+      <label for="f-notes">Notes or special requests</label>
+      <textarea class="textarea" id="f-notes" name="notes" rows="3" maxlength="1000" placeholder="Dietary needs, accessibility, anything we should know">{{ values.get('notes', '') }}</textarea>
+    </div>
+    <div>
+      <label class="check" for="f-consent">
+        <input id="f-consent" name="consent" type="checkbox" value="yes"{% if values.get('consent') %} checked{% endif %}{% if errors.get('consent') %} aria-invalid="true" aria-describedby="e-consent"{% endif %}>
+        <span>I agree to my details being stored and used to manage this registration.</span>
+      </label>
+      {% if errors.get('consent') %}<div class="field-error" id="e-consent" style="margin-top:8px">{{ errors['consent'] }}</div>{% endif %}
+    </div>
+    <div class="hp" aria-hidden="true"><label for="f-website">Website (leave empty)</label><input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+    <input type="hidden" name="ft" value="{{ form_token }}">
+    <button class="btn btn-gold btn-lg" type="submit" style="width:100%">Submit registration</button>
+    <p class="form-note">Submitting does not confirm your seat. You will receive an email once the trainer has reviewed your request.</p>
+  </form>
+{% endif %}
+</div>

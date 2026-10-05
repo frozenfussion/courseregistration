@@ -1,0 +1,18 @@
+# Caddy gets and renews the HTTPS certificate for this name by itself.
+# Requirements: the DNS A record points at this server, and ports 80 and 443 are open.
+register.faysalaziz.com {
+	encode zstd gzip
+
+	# Registration forms are tiny; refuse anything large.
+	request_body {
+		max_size 1MB
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+
+	# The app listens only on localhost; Caddy is the only thing exposed to the internet.
+	reverse_proxy 127.0.0.1:8000
+}

@@ -1,0 +1,53 @@
+{% extends "admin/base.html" %}
+{% block title %}Registrations{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div class="stack" style="gap:10px;min-width:0">
+    <h1 class="serif">Registrations</h1>
+    {% if course %}
+    <div class="sub">
+      {% if course.is_active %}<span class="pill pill-gold">Active</span>{% endif %}
+      <span>{{ course.title }}</span>
+      <span class="dim">·&nbsp; {{ course.start_date | date_range(course.end_date) }}</span>
+    </div>
+    {% endif %}
+  </div>
+  {% if courses | length > 1 %}
+  <form method="get" action="/admin/registrations" class="course-pick">
+    <label for="course-select" class="sr-only">Course</label>
+    <select class="select" id="course-select" name="course_id" @change="$el.form.submit()" x-data>
+      {% for c in courses %}<option value="{{ c.id }}"{% if course and c.id == course.id %} selected{% endif %}>{{ c.title }}{% if c.is_active %} (active){% endif %}</option>{% endfor %}
+    </select>
+  </form>
+  {% endif %}
+</div>
+
+{% if not course %}
+  <div class="empty-state">
+    <h2 class="serif">No courses yet.</h2>
+    <p>Create your first course to start receiving registrations.</p>
+    <a class="btn btn-gold" href="/admin/courses/new">Create a course</a>
+  </div>
+{% else %}
+  {% if failed_emails %}
+  <div class="notice bad" role="status">{{ failed_emails }} email{{ "s" if failed_emails != 1 }} failed to send in the last 7 days. Open the registration and use “Send again”.</div>
+  {% endif %}
+
+  <div id="seats" class="seatcard">{% include "admin/_seats.html" %}</div>
+
+  <div class="toolbar">
+    <div id="tabs" class="tabs" role="tablist" aria-label="Filter by status">{% include "admin/_tabs.html" %}</div>
+    <div class="search">
+      <label for="q" class="sr-only">Search registrations</label>
+      <input class="input" id="q" name="q" type="search" value="{{ q }}" placeholder="Search name, email or company"
+             hx-get="/admin/registrations" hx-trigger="input changed delay:300ms, search" hx-target="#table" hx-swap="innerHTML"
+             hx-include="#f-course, #f-status" hx-push-url="true">
+    </div>
+  </div>
+  <input type="hidden" id="f-status" name="status" value="{{ status }}">
+  <input type="hidden" id="f-course" name="course_id" value="{{ course.id }}">
+
+  <div class="table-wrap"><div id="table" class="table">{% include "admin/_table.html" %}</div></div>
+  <p class="foot-note">Changing a decision emails the student and can be reversed at any time. Only approved registrations use a seat.</p>
+{% endif %}
+{% endblock %}

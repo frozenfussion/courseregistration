@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ course.title }} · Brochure</title>
+<style>
+@font-face{font-family:"Inter";src:url("fonts/pdf-Inter-400.ttf");font-weight:400}
+@font-face{font-family:"Inter";src:url("fonts/pdf-Inter-500.ttf");font-weight:500}
+@font-face{font-family:"Inter";src:url("fonts/pdf-Inter-600.ttf");font-weight:600}
+@font-face{font-family:"Bodoni Moda";src:url("fonts/pdf-BodoniModa-400.ttf");font-weight:400;font-style:normal}
+@font-face{font-family:"Bodoni Moda";src:url("fonts/pdf-BodoniModa-Italic-400.ttf");font-weight:400;font-style:italic}
+
+@page{size:A4;background:#0a0a0a}
+@page cover{margin:0}
+@page body{margin:16mm 15mm 18mm 15mm;
+  @bottom-right{content:counter(page) " / " counter(pages);font:11px Inter,sans-serif;letter-spacing:.14em;color:#8c877e}}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#0a0a0a;color:#ede9e1;font-family:Inter,Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.55}
+h1,h2,h3,p,ul{margin:0;padding:0}
+ul{list-style:none}
+.serif{font-family:"Bodoni Moda",Georgia,serif;font-weight:400}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#b8955a}
+
+/* Page 1: cover */
+.cover{page:cover;position:relative;width:210mm;height:297mm;overflow:hidden;background:#0a0a0a;page-break-after:always}
+.cover-photo{position:absolute;right:0;top:0;width:114mm;height:297mm;object-fit:cover;object-position:50% 12%}
+.cover-fade-x{position:absolute;right:0;top:0;width:114mm;height:297mm;background:linear-gradient(90deg,#0a0a0a 0%,rgba(10,10,10,.55) 38%,rgba(10,10,10,0) 70%)}
+.cover-fade-y{position:absolute;left:0;right:0;bottom:0;height:100mm;background:linear-gradient(180deg,rgba(10,10,10,0),#0a0a0a 85%)}
+.cover-body{position:absolute;left:0;top:0;width:210mm;height:297mm;padding:15mm;display:flex;flex-direction:column}
+.brandrow{display:flex;align-items:center;gap:14px}
+.brandrow img{width:44px;height:44px;border-radius:10px}
+.brandrow .n{font-size:21px;line-height:1}
+.brandrow .r{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#a39e94;margin-top:3px}
+.cover-title{margin-top:22mm;width:116mm;display:flex;flex-direction:column;gap:18px}
+.cover-title h1{font-size:50px;line-height:1.04;letter-spacing:-.01em}
+.cover-title h1 em{color:#e3cb98}
+.rule{width:56px;height:1px;background:#b8955a}
+.sub{font-size:15px;line-height:1.55;color:#c9c4ba}
+.lead{font-size:12.5px;line-height:1.7;color:#a39e94}
+.facts{margin-top:11mm;width:116mm;border-top:1px solid #2a2a2a}
+.facts div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid #2a2a2a;font-size:13px}
+.facts dt,.facts span:first-child{color:#8c877e;letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+.facts .gold{color:#b8955a}
+.stats{margin-top:auto;display:flex;gap:14px;padding-top:24px;border-top:1px solid #2a2a2a}
+.stats div{flex:1}
+.stats b{display:block;font-family:"Bodoni Moda",Georgia,serif;font-weight:400;font-size:29px;line-height:1}
+.stats b i{font-family:Inter,sans-serif;font-style:normal;font-weight:400;font-size:.62em;vertical-align:.34em;margin-left:2px;color:#b8955a}
+.stats span{display:block;margin-top:6px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#a39e94;line-height:1.4}
+
+/* Pages 2 and 3 */
+.flow{page:body}
+.flow + .flow{page-break-before:always}
+.head{display:flex;align-items:center;gap:16px;padding-bottom:14px;border-bottom:1px solid #2a2a2a;margin-bottom:14px}
+.head .l{flex:1;display:flex;align-items:center;gap:12px}
+.head img{width:30px;height:30px;border-radius:8px}
+.head .t{font-size:16px;white-space:nowrap}
+.sec{margin-top:22px}
+.sec>.eyebrow{margin-bottom:12px}
+.two{columns:2;column-gap:28px}
+.out li{break-inside:avoid;display:flex;gap:12px;padding:9px 0;border-bottom:1px solid #1f1f1f;color:#c9c4ba}
+.out li::before{content:"";flex:none;width:6px;height:6px;margin-top:6px;background:#b8955a;transform:rotate(45deg)}
+.cols{display:flex;gap:28px;margin-top:26px}
+.cols>div{flex:1}
+.cols h2{font-size:22px;margin-bottom:12px}
+.dash li{display:flex;gap:10px;font-size:12px;line-height:1.5;color:#a39e94;margin-bottom:8px;break-inside:avoid}
+.dash li::before{content:"";flex:none;width:10px;height:1px;margin-top:9px;background:#b8955a}
+.mod{display:flex;gap:16px;padding:7px 0;border-bottom:1px solid #1f1f1f;break-inside:avoid}
+.mod .n{flex:none;width:30px;font-family:"Bodoni Moda",Georgia,serif;font-size:21px;line-height:1.1;color:#b8955a}
+.mod .t{font-size:13.5px;line-height:1.3;color:#ede9e1}
+.mod .s{margin-top:4px;font-size:11px;line-height:1.5;color:#8c877e}
+.cta{margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px 22px;border:1px solid #3a3220;background:#121212;border-radius:3px;break-inside:avoid}
+.cta h2{font-size:22px;margin-bottom:6px}
+.cta p{font-size:12px;color:#c9c4ba;line-height:1.55}
+.cta .c{margin-top:6px;font-size:12px;color:#8c877e}
+.qr{flex:none;width:92px;padding:8px;background:#ede9e1;border-radius:4px}
+.qr img{width:76px;height:76px}
+</style>
+</head>
+<body>
+
+<!-- Page 1 -->
+<section class="cover">
+  <img class="cover-photo" src="img/brochure-cover.jpg" alt="">
+  <div class="cover-fade-x"></div>
+  <div class="cover-fade-y"></div>
+  <div class="cover-body">
+    <div class="brandrow">
+      <img src="img/logo-mark.svg" alt="">
+      <div><div class="n serif">{{ site.trainer_name }}</div><div class="r">{{ site.trainer_role }}</div></div>
+    </div>
+
+    <div class="cover-title">
+      <div class="eyebrow">Training programme{% if course.duration_text %} &nbsp;·&nbsp; {{ course.duration_text }}{% endif %}</div>
+      <h1 class="serif">{{ course.title | accent(course.accent_word) }}</h1>
+      <div class="rule"></div>
+      {% if course.tagline %}<div class="sub">{{ course.tagline }}</div>{% endif %}
+      {% if course.introduction %}<div class="lead">{{ course.introduction.split("\n\n")[0] }}</div>{% endif %}
+    </div>
+
+    <div class="facts">
+      <div><span>Dates</span><span>{{ course.start_date | date_range(course.end_date) }}</span></div>
+      <div><span>Time</span><span>{{ course.daily_time or TBA }}</span></div>
+      <div><span>Venue</span><span>{{ course.venue or TBA }}</span></div>
+      <div><span>Fee</span><span>{{ course.fee_text or TBA }}{% if course.fee_note %} &nbsp;<span class="gold" style="font-size:13px;letter-spacing:0;text-transform:none">· {{ course.fee_note }}</span>{% endif %}</span></div>
+    </div>
+
+    {% if site.stats %}
+    <div class="stats">
+      {% for s in site.stats %}{% set v, plus = s.value | split_plus %}
+      <div><b>{{ v }}{% if plus %}<i>+</i>{% endif %}</b><span>{{ s.label }}</span></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Page 2 -->
+{% if course.outcomes or course.prerequisites or course.audience %}
+<section class="flow">
+  <div class="head"><div class="l"><img src="img/logo-mark.svg" alt=""><span class="t serif">{{ course.title }}</span></div></div>
+  {% if course.outcomes %}
+  <div class="sec" style="margin-top:0">
+    <div class="eyebrow">What you will be able to do</div>
+    <ul class="out two">{% for o in course.outcomes %}<li><span>{{ o }}</span></li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+  <div class="cols">
+    {% if course.prerequisites %}<div><h2 class="serif">Prerequisites</h2><ul class="dash">{% for p in course.prerequisites %}<li><span>{{ p }}</span></li>{% endfor %}</ul></div>{% endif %}
+    {% if course.audience %}<div><h2 class="serif">Who should attend</h2><ul class="dash">{% for a in course.audience %}<li><span>{{ a }}</span></li>{% endfor %}</ul></div>{% endif %}
+  </div>
+</section>
+{% endif %}
+
+<!-- Page 3 -->
+<section class="flow">
+  <div class="head"><div class="l"><img src="img/logo-mark.svg" alt=""><span class="t serif">{{ course.title }}</span></div></div>
+  {% if course.outline %}
+  <div class="eyebrow" style="margin-bottom:6px">Training outline</div>
+  <div>
+    {% for m in course.outline %}
+    <div class="mod"><div class="n">{{ loop.index }}</div><div><div class="t">{{ m.title }}</div>{% if m.topics %}<div class="s">{{ m.topics | join("  ·  ") }}</div>{% endif %}</div></div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  <div class="cta">
+    <div>
+      <h2 class="serif">Reserve your seat</h2>
+      <p>Register at {{ page_url | replace("https://", "") | trim("/") }}. Each registration is reviewed and confirmed by email.</p>
+      <div class="c">{{ site.contact_email }} &nbsp;·&nbsp; {{ site.trainer_location }}{% if course.fee_note %} &nbsp;·&nbsp; {{ course.fee_note }}{% endif %}</div>
+    </div>
+    <div class="qr"><img src="{{ qr }}" alt="QR code for the registration page"></div>
+  </div>
+</section>
+</body>
+</html>

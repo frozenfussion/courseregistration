@@ -1,0 +1,192 @@
+{% extends "public/base.html" %}
+{% block title %}{% if course %}{{ course.title }} · {{ site.trainer_name }}{% else %}{{ site.trainer_name }} · Course registration{% endif %}{% endblock %}
+{% block description %}{% if course %}{{ course.tagline or course.title }}{% else %}Training programmes by {{ site.trainer_name }}.{% endif %}{% endblock %}
+
+{% macro download_icon() %}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 20h16"/></svg>{% endmacro %}
+
+{% block body %}
+<div class="top">
+<header class="container site-header">
+  <a class="brand" href="/" aria-label="{{ site.trainer_name }} home">
+    <img src="{{ static('img/logo-mark.svg') }}" alt="" width="44" height="44">
+    <span>{{ site.trainer_name }}</span>
+  </a>
+  {% if course and not closed %}<a class="btn btn-gold" href="#register">Register</a>{% endif %}
+</header>
+
+{% if course %}
+<!-- Hero -->
+<section class="hero" id="top">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <div class="eyebrow rise" style="--d:.05s">Next programme &nbsp;·&nbsp; {{ site.trainer_location }}</div>
+      <h1 class="rise" style="--d:.15s">{{ course.title | accent(course.accent_word) }}</h1>
+      {% if course.tagline %}<p class="hero-sub rise" style="--d:.25s">{{ course.tagline }}</p>{% endif %}
+
+      <dl class="facts rise" style="--d:.35s;margin:0">
+        <div class="fact"><dt>Dates</dt><dd>{{ course.start_date | date_range(course.end_date) }}</dd></div>
+        <div class="fact"><dt>Duration</dt><dd>{{ course.duration_text or TBA }}{% if course.daily_time %} &nbsp;·&nbsp; {{ course.daily_time }}{% endif %}</dd></div>
+        <div class="fact"><dt>Venue</dt><dd>{{ course.venue or TBA }}{% if course.map_url %}<br><a href="{{ course.map_url }}" target="_blank" rel="noopener noreferrer" style="font-size:13px">View map</a>{% endif %}</dd></div>
+        <div class="fact"><dt>Fee</dt><dd>{{ course.fee_text or TBA }}</dd>{% if course.fee_note %}<div class="note">{{ course.fee_note }}</div>{% endif %}</div>
+      </dl>
+
+      {% if seats.capacity > 0 %}
+      <div class="meter rise" style="--d:.45s">
+        <div class="meter-row"><span>Seats</span><b>{{ seats.text }}</b></div>
+        <div class="meter-track" role="progressbar" aria-label="Seats taken" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ seats.percent }}"><div class="meter-fill" style="width:{{ seats.percent }}%"></div></div>
+      </div>
+      {% endif %}
+
+      <div class="cta-row rise" style="--d:.55s">
+        {% if closed == "full" %}<span class="btn btn-lg btn-disabled">Fully booked</span>
+        {% elif closed == "deadline" %}<span class="btn btn-lg btn-disabled">Registration closed</span>
+        {% else %}<a class="btn btn-lg btn-gold" href="#register">Register now</a>{% endif %}
+        <a class="btn btn-lg btn-ghost" href="/brochure.pdf" download>{{ download_icon() }} Download brochure</a>
+      </div>
+    </div>
+
+    <div class="portrait drift">
+      <div class="portrait-frame">
+        <img src="{{ static('img/hero.jpg') }}" alt="{{ site.trainer_name }}, technology trainer" width="853" height="1280" fetchpriority="high">
+        <div class="portrait-cap"><small>Your trainer</small><span>{{ site.trainer_name }}</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+{% else %}
+<section class="hero" id="top">
+  <div class="container empty-hero">
+    <div class="eyebrow">{{ site.trainer_role }} &nbsp;·&nbsp; {{ site.trainer_location }}</div>
+    <h1>No programme is open for registration right now.</h1>
+    <p class="lede">The next programme will be announced soon. In the meantime, you can read more about the trainer.</p>
+    <p style="margin-top:28px"><a class="btn btn-lg btn-ghost" href="{{ site.website_url }}">Visit {{ site.website_url | replace('https://', '') }}</a></p>
+  </div>
+</section>
+{% endif %}
+</div>
+
+<!-- Credentials -->
+{% if site.stats %}
+<section class="band" aria-label="Highlights">
+  <div class="container stats">
+    {% for s in site.stats %}{% set v, plus = s.value | split_plus %}
+    <div class="stat"><b>{{ v }}{% if plus %}<i>+</i>{% endif %}</b><span>{{ s.label }}</span></div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if course %}
+<!-- About + outcomes -->
+{% if course.introduction or course.outcomes %}
+<section class="container section split">
+  {% if course.introduction %}
+  <div class="col-a stack">
+    <div class="eyebrow">About the programme</div>
+    <h2 class="h2">{{ course.title }}</h2>
+    {% for para in course.introduction.split("\n\n") if para.strip() %}<p class="lede">{{ para.strip() }}</p>{% endfor %}
+  </div>
+  {% endif %}
+  {% if course.outcomes %}
+  <div class="col-b stack">
+    <div class="eyebrow">What you will be able to do</div>
+    <ul class="outcomes">{% for o in course.outcomes %}<li><span>{{ o }}</span></li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+</section>
+{% endif %}
+
+<!-- Prerequisites + audience -->
+{% if course.prerequisites or course.audience %}
+<section class="band">
+  <div class="container split">
+    {% if course.prerequisites %}
+    <div class="col-a stack" style="gap:22px">
+      <h3 class="h3">Prerequisites</h3>
+      <ul class="dash-list">{% for p in course.prerequisites %}<li><span>{{ p }}</span></li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+    {% if course.audience %}
+    <div class="col-a stack" style="gap:22px">
+      <h3 class="h3">Who should attend</h3>
+      <ul class="dash-list">{% for a in course.audience %}<li><span>{{ a }}</span></li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+<!-- Outline -->
+{% if course.outline %}
+<section class="container section" id="outline">
+  <div class="outline-head">
+    <div class="stack" style="gap:18px;min-width:0">
+      <div class="eyebrow">Training outline</div>
+      <h2 class="h2">{{ course.outline | length }} module{{ "s" if course.outline | length != 1 }}{% if course.duration_text %}, {{ course.duration_text }}{% endif %}.</h2>
+    </div>
+    <a class="btn btn-ghost" href="/brochure.pdf" download>{{ download_icon() }} Download full brochure (PDF)</a>
+  </div>
+  <div class="acc" x-data="{ open: 0 }">
+    {% for m in course.outline %}{% set i = loop.index0 %}
+    <div class="acc-item">
+      <h3 style="font:inherit;margin:0">
+        <button class="acc-btn" type="button" @click="open = open === {{ i }} ? -1 : {{ i }}" :aria-expanded="(open === {{ i }}).toString()" aria-controls="module-{{ loop.index }}">
+          <span class="acc-n">{{ loop.index }}</span>
+          <span class="acc-t">{{ m.title }}</span>
+          <svg class="acc-chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--muted)"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+      </h3>
+      {% if m.topics %}
+      <ul class="acc-panel" id="module-{{ loop.index }}" x-show="open === {{ i }}" x-cloak x-transition.opacity>
+        {% for t in m.topics %}<li><span>{{ t }}</span></li>{% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endif %}
+
+<!-- Trainer -->
+<section class="band">
+  <div class="container trainer-inner">
+    <div class="trainer-photo"><img src="{{ static('img/trainer.jpg') }}" alt="Portrait of {{ site.trainer_name }}" width="1060" height="1060" loading="lazy"></div>
+    <div class="trainer-copy">
+      <div class="eyebrow">Your trainer</div>
+      <h2 class="h2">{{ site.trainer_headline }}</h2>
+      <p class="lede">{{ site.trainer_bio }}</p>
+      {% if site.credentials %}<ul class="chips">{% for c in site.credentials %}<li>{{ c }}</li>{% endfor %}</ul>{% endif %}
+      <a href="{{ site.website_url }}" style="font-size:14px">{{ site.website_url | replace('https://', '') }} &nbsp;→</a>
+    </div>
+  </div>
+</section>
+
+{% if course %}
+<!-- Registration -->
+<section class="container section register" id="register">
+  <div class="register-side">
+    <div class="eyebrow">Registration</div>
+    <h2 class="h2">Reserve your seat.</h2>
+    <p class="lede" style="line-height:1.7">Every registration is reviewed by the trainer. You will receive an email as soon as your place is approved.</p>
+    <div class="summary">
+      <div class="summary-title">{{ course.title }}</div>
+      <div class="summary-row"><span>Dates</span><span>{{ course.start_date | date_range(course.end_date) }}</span></div>
+      <div class="summary-row"><span>Venue</span><span>{{ course.venue or TBA }}</span></div>
+      <div class="summary-row"><span>Fee</span><span>{{ course.fee_text or TBA }}</span></div>
+      {% if seats.capacity > 0 %}<div class="summary-row"><span>Seats</span><span>{{ seats.text }}</span></div>{% endif %}
+    </div>
+  </div>
+  <div class="register-main">
+    {% include "public/_register_card.html" %}
+  </div>
+</section>
+{% endif %}
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="brand"><img src="{{ static('img/logo-mark.svg') }}" alt="" width="32" height="32"><p>© {{ site.trainer_name }}. {{ site.trainer_role }}, {{ site.trainer_location }}.</p></div>
+    <a href="{{ site.website_url }}" style="font-size:13px">{{ site.website_url | replace('https://', '') }}</a>
+  </div>
+</footer>
+{% endblock %}

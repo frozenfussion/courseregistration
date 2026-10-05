@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0a0a0a">
+<title>{% block title %}Admin{% endblock %} · Course registration</title>
+<link rel="icon" href="{{ static('favicon.svg') }}" type="image/svg+xml">
+<link rel="stylesheet" href="{{ static('css/base.css') }}">
+<link rel="stylesheet" href="{{ static('css/admin.css') }}">
+<script src="{{ static('js/htmx.min.js') }}" defer></script>
+<script src="{{ static('js/alpine.min.js') }}" defer></script>
+<meta name="htmx-config" content='{"allowEval":false,"allowScriptTags":false}'>
+</head>
+<body hx-headers='{"X-CSRF-Token": "{{ csrf_token }}"}'>
+<div class="shell">
+  <aside class="side">
+    <a class="side-brand" href="/admin/registrations">
+      <img src="{{ static('img/logo-mark.svg') }}" alt="" width="38" height="38">
+      <span><b>Faysal Aziz</b><small>Admin</small></span>
+    </a>
+    <nav class="side-nav" aria-label="Admin">
+      <a href="/admin/registrations" class="{{ 'on' if nav == 'registrations' }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 20v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2M9.5 10a4 4 0 100-8 4 4 0 000 8zM21 20v-2a4 4 0 00-3-3.9M16 2.1a4 4 0 010 7.8"/></svg>
+        <span>Registrations</span>{% if pending_total %}<em class="badge" title="Pending in all courses">{{ pending_total }}</em>{% endif %}
+      </a>
+      <a href="/admin/courses" class="{{ 'on' if nav == 'courses' }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 016.5 17H20V3H6.5A2.5 2.5 0 004 5.5v14zM4 19.5A2.5 2.5 0 006.5 22H20v-5"/></svg>
+        <span>Courses</span>
+      </a>
+      <a href="/admin/site" class="{{ 'on' if nav == 'site' }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+        <span>Site content</span>
+      </a>
+      <a href="/" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></svg>
+        <span>View public page</span>
+      </a>
+    </nav>
+    <div class="side-foot">
+      <span>Signed in as {{ admin_name }}</span>
+      <form method="post" action="/admin/logout"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button type="submit" class="linkbtn">Sign out</button></form>
+    </div>
+  </aside>
+
+  <main class="main">
+    {% if flash %}<div class="notice {{ flash.k }}" role="status">{{ flash.m }}</div>{% endif %}
+    <div id="notice" aria-live="polite"></div>
+    {% block content %}{% endblock %}
+  </main>
+</div>
+</body>
+</html>

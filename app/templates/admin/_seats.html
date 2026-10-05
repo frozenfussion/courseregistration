@@ -1,0 +1,9 @@
+{% if seats %}
+<div class="seat-num"><span class="label">Approved seats</span><span class="serif big">{{ seats.approved }} <small>of {{ seats.capacity }}</small></span></div>
+<div class="seat-bar"><div class="meter-track" role="progressbar" aria-label="Approved seats" aria-valuemin="0" aria-valuemax="{{ seats.capacity }}" aria-valuenow="{{ seats.approved }}"><div class="meter-fill" style="width:{{ seats.percent }}%"></div></div></div>
+<p class="seat-help">Only approved registrations use a seat. When the count reaches {{ seats.capacity }}, the public page closes registration.</p>
+<a class="btn btn-ghost" href="/admin/registrations.csv?{{ {'course_id': course.id, 'status': status, 'q': q} | urlencode }}">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4.5-4.5M12 15l4.5-4.5M4 20h16"/></svg>
+  Download CSV · {{ labels[status] | lower if status in labels else 'all' }}
+</a>
+{% endif %}

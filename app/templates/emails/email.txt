@@ -1,0 +1,15 @@
+{{ heading }}
+
+{% for p in paragraphs %}{{ p }}
+
+{% endfor %}{% if note %}A note from the trainer:
+{{ note }}
+
+{% endif %}{% if alert %}{% for label, value in alert.rows %}{{ label }}: {{ value }}
+{% endfor %}
+Review in admin: {{ alert.url }}
+{% else %}{{ course.title }}
+{{ when }}{% if venue %}
+{{ venue }}{% endif %}
+{% endif %}
+{{ foot }}

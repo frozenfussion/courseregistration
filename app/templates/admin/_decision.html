@@ -1,0 +1,5 @@
+{#- Response to a decision: the updated row (or nothing if it no longer matches the open tab) plus out-of-band updates. -#}
+{% if visible %}{% include "admin/_row.html" %}{% endif %}
+<div id="seats" class="seatcard" hx-swap-oob="true">{% include "admin/_seats.html" %}</div>
+<div id="tabs" class="tabs" role="tablist" aria-label="Filter by status" hx-swap-oob="true">{% include "admin/_tabs.html" %}</div>
+<div id="notice" aria-live="polite" hx-swap-oob="true">{% if notice %}<div class="notice {{ notice_kind or 'warn' }}" role="status">{{ notice }}</div>{% endif %}</div>

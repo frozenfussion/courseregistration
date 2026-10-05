@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="flow" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#8F6E3A"/>
+      <stop offset="0.55" stop-color="#B8955A"/>
+      <stop offset="1" stop-color="#E3CB98"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Black tile -->
+  <rect width="512" height="512" rx="96" fill="#0A0A0A"/>
+
+  <!-- Hexagon frame, broken at two corners like circuit traces -->
+  <path d="M256 92 L398 174 L398 262" fill="none" stroke="#B8955A" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M398 318 L398 338 L256 420 L114 338 L114 250" fill="none" stroke="#B8955A" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M114 194 L114 174 L256 92" fill="none" stroke="#B8955A" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Trace endpoints (nodes) -->
+  <circle cx="398" cy="290" r="14" fill="#EDE9E1"/>
+  <circle cx="114" cy="222" r="14" fill="#8F6E3A"/>
+
+  <!-- Artistic brush-stroke S-curve through the centre -->
+  <path d="M168 318 C 168 250, 344 262, 344 194" fill="none" stroke="url(#flow)" stroke-width="34" stroke-linecap="round"/>
+
+  <!-- Small accent dot, like a pixel breaking away -->
+  <rect x="330" y="120" width="20" height="20" rx="3" fill="#EDE9E1"/>
+</svg>

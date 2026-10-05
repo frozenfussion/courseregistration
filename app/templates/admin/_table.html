@@ -1,0 +1,7 @@
+<div class="thead">
+  <span>Student</span><span>Company</span><span>Submitted</span><span>Status</span><span>Decision</span>
+</div>
+{% for r in rows %}{% include "admin/_row.html" %}{% endfor %}
+{% if not rows %}
+<div class="empty-row">{% if q %}No registrations match “{{ q }}”.{% elif status != "all" %}No {{ labels[status] | lower }} registrations.{% else %}No registrations yet. They will appear here as soon as someone registers.{% endif %}</div>
+{% endif %}

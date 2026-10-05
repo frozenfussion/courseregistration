@@ -1,0 +1,5 @@
+-r requirements.txt
+pytest==9.1.1
+# Only needed to regenerate the static font files used by the PDF brochure (see scripts/make_pdf_fonts.sh)
+fonttools==4.66.1
+brotli==1.2.0

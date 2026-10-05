@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %}
+{% block title %}Site content{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div class="stack" style="gap:10px"><h1 class="serif">Site content</h1><div class="sub dim">Shown on the public page and in the brochure, whichever course is active.</div></div>
+  <div class="head-actions"><button class="btn btn-gold" type="submit" form="site-form">Save changes</button></div>
+</div>
+{% if errors %}<div class="form-error" role="alert"><ul class="err-list">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul></div>{% endif %}
+
+<form id="site-form" method="post" action="/admin/site" class="stack editor" style="gap:20px;max-width:880px">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+  <section class="panel" x-data='{ stats: {{ s.stats | tojson }} }'>
+    <div class="panel-head"><h2 class="serif">Highlights</h2><span class="dim">Up to 8</span></div>
+    <p class="help">The numbers in the band under the hero, for example 10,000+ and Training hours. Include the + yourself if you want it.</p>
+    <template x-for="(st, i) in stats" :key="i">
+      <div class="list-row">
+        <input class="input" style="max-width:150px" type="text" name="stat_value" x-model="st.value" aria-label="Number" placeholder="10,000+" maxlength="20">
+        <input class="input" type="text" name="stat_label" x-model="st.label" aria-label="Label" placeholder="Training hours" maxlength="60">
+        <button class="act icon" type="button" @click="stats.splice(i, 1)" aria-label="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </template>
+    <div><button class="btn btn-ghost btn-sm" type="button" @click="stats.length < 8 && stats.push({ value: '', label: '' })">+ Add highlight</button></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2 class="serif">Trainer</h2></div>
+    <div class="grid-fields">
+      <div class="field"><label for="s-name">Name</label><input class="input" id="s-name" name="trainer_name" value="{{ s.trainer_name }}" maxlength="80"></div>
+      <div class="field"><label for="s-role">Role</label><input class="input" id="s-role" name="trainer_role" value="{{ s.trainer_role }}" maxlength="120"></div>
+      <div class="field"><label for="s-loc">Location</label><input class="input" id="s-loc" name="trainer_location" value="{{ s.trainer_location }}" maxlength="80"></div>
+      <div class="field"><label for="s-web">Website</label><input class="input" id="s-web" name="website_url" type="url" value="{{ s.website_url }}" maxlength="200"></div>
+    </div>
+    <div class="field"><label for="s-head">Headline</label><input class="input" id="s-head" name="trainer_headline" value="{{ s.trainer_headline }}" maxlength="160"></div>
+    <div class="field"><label for="s-bio">Short bio</label><textarea class="textarea" id="s-bio" name="trainer_bio" rows="5" maxlength="1500">{{ s.trainer_bio }}</textarea></div>
+    <div class="field"><label for="s-mail">Contact email (shown in the brochure)</label><input class="input" id="s-mail" name="contact_email" value="{{ s.contact_email }}" maxlength="200"></div>
+  </section>
+
+  <section class="panel" x-data='{ items: {{ s.credentials | tojson }} }'>
+    <div class="panel-head"><h2 class="serif">Credentials</h2><span class="dim">Shown as small tags</span></div>
+    <template x-for="(item, i) in items" :key="i">
+      <div class="list-row">
+        <input class="input" type="text" name="credentials" x-model="items[i]" aria-label="Credential" maxlength="80">
+        <button class="act icon" type="button" @click="items.splice(i, 1)" aria-label="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+    </template>
+    <div><button class="btn btn-ghost btn-sm" type="button" @click="items.push('')">+ Add credential</button></div>
+  </section>
+
+  <div class="form-actions"><button class="btn btn-gold btn-lg" type="submit">Save changes</button></div>
+</form>
+{% endblock %}

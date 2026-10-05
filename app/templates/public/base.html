@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Faysal Aziz{% endblock %}</title>
+<meta name="description" content="{% block description %}Training programmes by Faysal Aziz, technology trainer and consultant in Kuala Lumpur.{% endblock %}">
+<meta name="theme-color" content="#0a0a0a">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ self.title() }}">
+<meta property="og:description" content="{{ self.description() }}">
+<meta property="og:image" content="{{ base_url() }}{{ static('img/trainer.jpg') }}">
+<link rel="icon" href="{{ static('favicon.svg') }}" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{{ static('img/apple-touch-icon.png') }}">
+<link rel="preload" href="/static/fonts/Inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/static/fonts/BodoniModa.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{ static('css/base.css') }}">
+<link rel="stylesheet" href="{{ static('css/public.css') }}">
+<noscript><style>[x-cloak]{display:revert!important}.rise,.drift{animation:none!important}</style></noscript>
+<script src="{{ static('js/htmx.min.js') }}" defer></script>
+<script src="{{ static('js/alpine.min.js') }}" defer></script>
+<meta name="htmx-config" content='{"allowEval":false,"allowScriptTags":false}'>
+</head>
+<body>
+{% block body %}{% endblock %}
+</body>
+</html>

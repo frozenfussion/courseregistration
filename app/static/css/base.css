@@ -1,0 +1,64 @@
+/* Shared tokens, fonts and controls. Fonts are self-hosted (SIL Open Font License, see /static/fonts). */
+@font-face{font-family:"Bodoni Moda";src:url("../fonts/BodoniModa.woff2") format("woff2");font-weight:400 900;font-style:normal;font-display:swap}
+@font-face{font-family:"Bodoni Moda";src:url("../fonts/BodoniModa-Italic.woff2") format("woff2");font-weight:400 900;font-style:italic;font-display:swap}
+@font-face{font-family:"Inter";src:url("../fonts/Inter.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+
+:root{
+  --bg:#0a0a0a; --surface:#121212; --surface-2:#1a1a1a; --field:#0d0d0d; --line:#242424; --line-2:#2c2c2c;
+  --text:#ede9e1; --text-2:#c9c4ba; --muted:#a39e94; --dim:#8c877e; --faint:#6f6b63;
+  --gold:#b8955a; --gold-hi:#e3cb98; --gold-lo:#8f6e3a;
+  --ok:#8fd0a0; --ok-bg:#14261b; --ok-line:#25452f;
+  --warn:#e3cb98; --warn-bg:#2a2316; --warn-line:#5a4a26;
+  --bad:#eaa59c; --bad-bg:#2a1715; --bad-line:#5a2a26;
+  --serif:"Bodoni Moda",Georgia,"Times New Roman",serif;
+  --sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+h1,h2,h3,h4,p,ul,ol,figure{margin:0}
+ul{padding:0;list-style:none}
+a{color:var(--gold-hi);text-decoration:none}
+a:hover{color:var(--text)}
+button{font:inherit;color:inherit}
+[x-cloak]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--gold-hi);outline-offset:3px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:46px;padding:0 24px;border-radius:3px;
+  font:600 14px/1 var(--sans);letter-spacing:.02em;cursor:pointer;border:1px solid transparent;transition:background .2s,color .2s,border-color .2s,transform .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-lg{min-height:52px;padding:0 30px;font-size:15px}
+.btn-gold{background:var(--gold);color:#0a0a0a}
+.btn-gold:hover{background:var(--gold-hi);color:#0a0a0a}
+.btn-ghost{border-color:#3a3a3a;color:var(--text);font-weight:500;background:transparent}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold-hi)}
+.btn-disabled{background:var(--surface-2);border-color:var(--line);color:var(--dim);cursor:default}
+.btn-disabled:hover{transform:none}
+.btn svg{flex:none}
+
+/* Form fields */
+.field{display:flex;flex-direction:column;gap:8px;min-width:0}
+.field>label,.label{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.input,.textarea,.select{width:100%;min-height:48px;padding:0 14px;background:var(--field);border:1px solid var(--line-2);border-radius:3px;
+  color:var(--text);font:16px/1.4 var(--sans);transition:border-color .2s,background .2s}
+.textarea{padding:12px 14px;line-height:1.6;resize:vertical;min-height:0}
+.select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a39e94' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+.input:focus,.textarea:focus,.select:focus{border-color:var(--gold);background:#101010;outline:none}
+.input::placeholder,.textarea::placeholder{color:var(--faint)}
+.input[aria-invalid="true"],.textarea[aria-invalid="true"]{border-color:var(--bad)}
+.field-error{font-size:13px;color:var(--bad);line-height:1.4}
+input[type=checkbox]{accent-color:var(--gold)}
+.check{display:flex;align-items:flex-start;gap:12px;font-size:14px;line-height:1.5;color:var(--text-2);cursor:pointer}
+.check input{flex:none;width:20px;height:20px;margin:1px 0 0}
+
+/* Pills */
+.pill{display:inline-block;padding:4px 11px;border-radius:100px;font-size:12px;font-weight:500;border:1px solid var(--line-2);background:#1f1f1f;color:var(--text-2)}
+.pill-approved{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-line)}
+.pill-kiv{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-line)}
+.pill-rejected{background:var(--bad-bg);color:var(--bad);border-color:var(--bad-line)}
+.pill-gold{background:transparent;color:var(--gold-hi);border-color:var(--gold);text-transform:uppercase;letter-spacing:.12em;font-size:11px;padding:3px 10px}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

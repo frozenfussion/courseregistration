@@ -1,0 +1,5 @@
+{#- Response to a tab click or a search: the table plus out-of-band updates for the tabs and seat card. -#}
+{% include "admin/_table.html" %}
+<div id="seats" class="seatcard" hx-swap-oob="true">{% include "admin/_seats.html" %}</div>
+<div id="tabs" class="tabs" role="tablist" aria-label="Filter by status" hx-swap-oob="true">{% include "admin/_tabs.html" %}</div>
+<input type="hidden" id="f-status" name="status" value="{{ status }}" hx-swap-oob="true">

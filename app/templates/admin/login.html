@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0a0a0a">
+<title>Sign in · Course registration</title>
+<link rel="icon" href="{{ static('favicon.svg') }}" type="image/svg+xml">
+<link rel="stylesheet" href="{{ static('css/base.css') }}">
+<link rel="stylesheet" href="{{ static('css/admin.css') }}">
+</head>
+<body>
+<main class="login">
+  <form class="login-card" method="post" action="/admin/login">
+    <img src="{{ static('img/logo-mark.svg') }}" alt="" width="52" height="52" style="border-radius:12px">
+    <h1 class="serif">Sign in</h1>
+    {% if error %}<div class="form-error" role="alert">{{ error }}</div>{% endif %}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="next" value="{{ next }}">
+    <div class="field"><label for="username">Username</label><input class="input" id="username" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" value="{{ username or '' }}" required autofocus></div>
+    <div class="field"><label for="password">Password</label><input class="input" id="password" name="password" type="password" autocomplete="current-password" required></div>
+    <button class="btn btn-gold btn-lg" type="submit" style="width:100%">Sign in</button>
+  </form>
+</main>
+</body>
+</html>
