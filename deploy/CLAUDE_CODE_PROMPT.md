@@ -8,7 +8,7 @@ DigitalOcean droplet, to https://register.faysalaziz.com. Read CLAUDE.md, README
 
 How to work:
 - Never make anything up. Back every claim with command output. If you do not know something, say so.
-- You cannot use sudo. Whenever a step needs sudo, tell me the exact command, wait while I run it in my second
+- You cannot use sudo, and you cannot type into interactive or hidden prompts. Whenever a step needs sudo or typed input, tell me the exact command, wait while I run it in my second
   terminal, and continue only when I say it is done. Do not try to work around sudo.
 - Never print, log, commit or ask me for secrets. Do not cat or echo .env. Use "sed" to show it with the
   secret values hidden if you need to look at it. The Resend key and the admin password are typed by me at hidden
@@ -22,9 +22,10 @@ Do this, in order, and show proof for each step:
 2. Confirm DNS: that register.faysalaziz.com resolves to this server's public IP (compare with curl -s ifconfig.me).
 3. Tell me to run:  sudo ./deploy/1-system-setup.sh   and wait. Afterwards verify caddy, gh, and the two systemd unit
    files exist (they must not be running yet).
-4. Run ./deploy/2-app-setup.sh. It asks me for the Resend API key and the admin username and password at hidden
-   prompts, so tell me when it is waiting for me and let me type. Afterwards verify: .env exists with mode 600,
-   alembic is at head, one active course exists, one admin exists (count only, never show the hash).
+4. Tell me to run ./deploy/2-app-setup.sh in my second terminal and wait. It asks for the Resend API key and the admin
+   username and password at hidden prompts, which you cannot answer from here, so do not run it yourself. Afterwards
+   verify: .env exists with mode 600, alembic is at head, one active course exists, one admin exists (count only,
+   never show the hash).
 5. Run the tests: .venv/bin/pip install -r requirements-dev.txt && .venv/bin/python -m pytest -q. Report the result.
 6. Tell me to run:  sudo ./deploy/3-start-services.sh   and wait.
 7. Verify like a skeptic and show the output of each:

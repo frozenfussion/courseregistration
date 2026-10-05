@@ -14,7 +14,7 @@ Course registration web app for the trainer Aziz (Faysal Aziz). Public course pa
 
 - Do not make things up. If you do not know something, say so and say where it can be checked. Back claims with command output.
 - Never print, log, commit or ask for secrets. `.env` holds the Resend API key and `SECRET_KEY`; it is mode 600 and ignored by git. To change the key use `deploy/set-resend-key.sh` (hidden prompt).
-- You cannot use `sudo`. For anything needing it, tell the owner exactly which script or command to run in a second terminal, then wait. The sudo scripts are `deploy/1-system-setup.sh` and `deploy/3-start-services.sh`.
+- You cannot use `sudo`, and you cannot answer interactive or hidden prompts. For anything needing either, tell the owner exactly which script or command to run in a second terminal, then wait. The sudo scripts are `deploy/1-system-setup.sh` and `deploy/3-start-services.sh`; `deploy/2-app-setup.sh` needs typed (hidden) input, so the owner runs it too.
 - Admin username and password are typed by the owner at a hidden prompt (`python -m scripts.create_admin`). Never set or log one.
 - Keep answers short and plain. Do only what was asked.
 - Work on `main`. Do not create other branches or pull requests unless asked.
