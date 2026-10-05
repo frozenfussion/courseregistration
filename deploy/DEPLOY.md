@@ -128,6 +128,14 @@ sudo systemctl start regsite
 
 Copy `data/backups/` to your laptop now and then (`scp aziz@168.144.242.29:projects/regsite/data/backups/* .`).
 
+## Server hardening (optional)
+
+```bash
+sudo ./deploy/4-harden-server.sh
+```
+
+Turns on the firewall (SSH, 80, 443 only), bans addresses after repeated failed SSH logins (fail2ban), tightens four SSH settings and keeps automatic security updates on. It does not change how you log in (port 22, password, root access as before) and never reboots. Undo with `sudo ./deploy/4-harden-server.sh --undo`. Details, checks and how to unban yourself: [`HARDENING.md`](HARDENING.md). A DigitalOcean Cloud Firewall is separate and set in the dashboard.
+
 ## Troubleshooting
 
 | Symptom | What to check |
